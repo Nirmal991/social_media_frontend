@@ -1,0 +1,31 @@
+import React from 'react'
+import { useSelector } from 'react-redux'
+import type { RootState } from '../../store/store'
+import { User, User2 } from "lucide-react";
+import { Link } from 'react-router-dom';
+
+const Navbar = () => {
+    const user = useSelector((state: RootState) => state.auth.user);
+    return (
+        <nav className='min-h-[10vh] flex justify-between items-center px-4 py-4 md:px-20 md:py-4 border-b border-[#230737] shadow-[#230737] sticky top-0 bg-black z-50'>
+            <Link to='/' className='text-[#9929EA] font-bold text-xl md:text-3xl'>
+                ConnectHub
+            </Link>
+            <div className='flex justify-center items-center gap-2'>
+                {user?.profileImage ? (
+                    <Link to={`/profile/${user?.username}`}>
+                        <img className='w-7.5 rounded-2xl bg-cover aspect-square border-2 border-[#9929EA] object-cover'
+                            src={user?.profileImage} />
+                    </Link>
+                ) : (
+                    <User2 className='text-white' />
+                )}
+                <Link to={`/profile/${user?.username}`} className='text-white'>
+                    {user?.username}
+                </Link>
+            </div>
+        </nav>
+    )
+}
+
+export default Navbar

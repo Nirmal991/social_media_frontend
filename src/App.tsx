@@ -1,14 +1,42 @@
 import { Routes, Route } from 'react-router-dom'
 import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
+import FeedPage from './pages/FeedPage'
+import { ToastContainer } from "react-toastify";
+import { useDispatch } from 'react-redux'
+import { getCurrentUser } from './api/auth.api'
+import { setAuthLoad, setUser } from './store/slice/authSLice'
+import { useEffect } from 'react'
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const response = await getCurrentUser(); // see the issue
+        dispatch(setUser(response.data));
+      } catch (error) {
+        console.log("ERROR: ", error);
+
+      } finally {
+        dispatch(setAuthLoad());
+      }
+    }
+
+    loadUser()
+  }, [])
+
 
   return (
-    <Routes>
-      <Route path='/register' element={<RegisterPage />} />
-      <Route path='/login' element={<LoginPage />} />
-    </Routes>
+    <div className='min-h-screen bg-[#000000]  w-full overflow-x-hidden'>
+      <Routes>
+        <Route path='/' element={<FeedPage />} />
+        <Route path='/register' element={<RegisterPage />} />
+        <Route path='/login' element={<LoginPage />} />
+      </Routes>
+      <ToastContainer />
+    </div>
   )
 }
 
