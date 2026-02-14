@@ -29,7 +29,9 @@ function LoginUserForm() {
             setLoading(true);
             setServerError(null);
 
-            const response = await loginUser(data);
+            const response = await loginUser(data)
+            console.log("Login response:", response.data);
+            // localStorage.setItem("token", response.accessToken);
             dispatch(setUser(response.data.user));
             toast.success("User Logged in Successfully");
             reset();

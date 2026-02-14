@@ -43,6 +43,8 @@ export const loginUser = async(data: LoginUserFormData) => {
              "Content-Type": "application/json",
         }
     })
+    console.log("Login response:", response.data);
+    localStorage.setItem("token", response.data.data.accessToken);
     return response.data;
 }
 

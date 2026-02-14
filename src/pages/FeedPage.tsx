@@ -7,6 +7,7 @@ import Navbar from '../components/General/Navbar'
 import Sidebar from '../components/General/Sidebar'
 import { getFeedPost } from '../api/feed.api'
 import { toast } from 'react-toastify'
+import FeedPost from '../components/FeedPageComponent/FeedPost'
 
 const FeedPage = () => {
     const { loading } = useSelector((state: RootState) => state.auth)
@@ -44,7 +45,9 @@ const FeedPage = () => {
                     ) : feedPost.length === 0 ? (
                         <p className='text-white'>No post Found</p>
                     ) : (
-                        <div></div>
+                        feedPost.map((feedPost) => (
+                            <FeedPost key={feedPost._id} post={feedPost}/>
+                        ))
                     )
                     }
                 </div>
