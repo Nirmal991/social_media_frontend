@@ -30,7 +30,7 @@ function App() {
 
 
   return (
-    <div className='min-h-screen bg-[#000000]  w-full overflow-x-hidden'>
+    <div className='min-h-screen bg-[#000000] w-full overflow-x-hidden'>
       <Routes>
         <Route path='/' element={<FeedPage />} />
         <Route path='/profile/:username' element={<ProfilePage />} />

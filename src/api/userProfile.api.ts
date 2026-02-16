@@ -10,7 +10,7 @@ export const getUserProfilePost = async(username: string) => {
     return response.data.data
 }
 
-export const folowUser = async(username: string) => {
+export const followUser = async(username: string) => {
     const response = await api.get(`/auth/follow/${username}`);
     return response.data;
 }
