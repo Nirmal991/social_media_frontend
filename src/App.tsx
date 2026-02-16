@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { getCurrentUser } from './api/auth.api'
 import { setAuthLoad, setUser } from './store/slice/authSLice'
 import { useEffect } from 'react'
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ function App() {
     <div className='min-h-screen bg-[#000000]  w-full overflow-x-hidden'>
       <Routes>
         <Route path='/' element={<FeedPage />} />
+        <Route path='/profile/:username' element={<ProfilePage />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/login' element={<LoginPage />} />
       </Routes>

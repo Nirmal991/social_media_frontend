@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import type { FeedPostType } from '../../types/feed';
 import type { CommentType } from '../../types/comment';
 import { useSelector } from 'react-redux';
@@ -6,6 +6,9 @@ import type { RootState } from '../../store/store';
 import { Link } from 'react-router-dom';
 import { Heart, MessageCircle, Trash2, User2 } from 'lucide-react';
 import Spinner from '../General/Spinner';
+import { toast } from 'react-toastify';
+import { toggleLikePost } from '../../api/like.api';
+import { createComment, deleteComment, getCommentByPostId } from '../../api/comment.api';
 
 
 interface FeedPageProps {
@@ -32,23 +35,82 @@ const FeedPost = ({ post }: FeedPageProps) => {
     const isLikedByMe = user ? likes.includes(user._id) : false;
 
     const handleToggleLike = async () => {
+        if (!user) {
+            toast.error("Please login to the post")
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            if (isLikedByMe) {
+                setLikes((prev) => prev.filter((id) => id !== user._id));
+                setLikeCount((prev) => prev - 1);
+            } else {
+                setLikes((prev) => [...prev, user._id]);
+                setLikeCount((prev) => prev + 1);
+                toast.success("You liked this post");
+            }
+
+            await toggleLikePost(post._id);
+        } catch (error: any) {
+            toast.error(error.message || "Failed to toggle like");
+        } finally {
+            setLoading(false);
+        }
     }
 
     const fetchComments = async () => {
-
+        try {
+            setLoadingComments(true);
+            const data = await getCommentByPostId(post._id);
+            setComments(data)
+        } catch (error) {
+            toast.error("Failed to load comments");
+        } finally {
+            setLoadingComments(false);
+        }
     }
 
     const handleToggleComments = async () => {
-
+        setShowComments((prev) => !prev)
+        if (!showComments) fetchComments();
     }
 
     const handleAddComment = async () => {
+        if (!user) return toast.error("Login to comment");
+        if (!commentText.trim()) return toast.error('Comment cannot be empty');
 
-    }
+        try {
+            const newComment = await createComment(post._id, commentText);
+            setComments((prev) => [newComment, ...prev]);
+            setCommentsCount((prev) => prev + 1);
+            setCommentText("");
+            toast.success("Comment posted");
+        } catch (error: any) {
+            toast.error(error.message || "Failed to add comment");
+        }
+    };
+
 
     const handleDeleteComment = async (commentId: string) => {
-
+        try {
+            await deleteComment(post._id, commentId);
+            setComments((prev) => prev.filter((c) => c._id !== commentId))
+            setCommentsCount((prev) => prev - 1);
+            toast.success("Comment deleted");
+        } catch (error: any) {
+            toast.error(error.message || "Failed to delete comment");
+        }
     }
+
+    useEffect(() => {
+        if (contentRef.current) {
+            const element = contentRef.current;
+            setisOverflowing(element.scrollHeight > element.clientHeight);
+        }
+    }, [post.content])
+
     return (
         <section className='min-w-[60vw] md:px-32 md:py-8'>
             <div className='flex flex-col gap-2'>
@@ -142,23 +204,23 @@ const FeedPost = ({ post }: FeedPageProps) => {
                                                 src={
                                                     comment.commentedBy.profileImage || '/default-avatar.png'
                                                 }
-                                                className='w-8 h-8 rounded-full object-cover'/>
-                                                <div>
-                                                    <p className='text-sm text-white font-bold'>
-                                                        {comment.commentedBy.username}
-                                                    </p>
-                                                    <p className='text-sm text-white/80'>
-                                                        {comment.comment}
-                                                    </p>
-                                                </div>
+                                                className='w-8 h-8 rounded-full object-cover' />
+                                            <div>
+                                                <p className='text-sm text-white font-bold'>
+                                                    {comment.commentedBy.username}
+                                                </p>
+                                                <p className='text-sm text-white/80'>
+                                                    {comment.comment}
+                                                </p>
+                                            </div>
                                         </div>
                                         {canDelete && (
                                             <button
-                                            onClick={() => handleDeleteComment(comment._id)}
-                                            className='text-red-400 hover:text-red-500 cursor-pointer'
-                                            title='Delete comment'
+                                                onClick={() => handleDeleteComment(comment._id)}
+                                                className='text-red-400 hover:text-red-500 cursor-pointer'
+                                                title='Delete comment'
                                             >
-                                                 <Trash2 size={16} />
+                                                <Trash2 size={16} />
                                             </button>
                                         )}
                                     </div>
@@ -168,15 +230,15 @@ const FeedPost = ({ post }: FeedPageProps) => {
 
                         {/* Add comment */}
                         <div className='flex gap-2 pt-2'>
-                            <input 
-                            value={commentText}
-                            onChange={(e) => setCommentText(e.target.value)}
-                            className='flex-1 bg-white/5 text-white px-3 py-2 rounded-md'
-                            placeholder='Write a comment'
+                            <input
+                                value={commentText}
+                                onChange={(e) => setCommentText(e.target.value)}
+                                className='flex-1 bg-white/5 text-white px-3 py-2 rounded-md'
+                                placeholder='Write a comment'
                             />
                             <button
-                            onClick={handleAddComment}
-                            className='px-4 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-50 cursor-pointer hover:scale-[1.02] bg-[#9929EA] text-white'
+                                onClick={handleAddComment}
+                                className='px-4 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-50 cursor-pointer hover:scale-[1.02] bg-[#9929EA] text-white'
                             >
                                 Post
                             </button>
