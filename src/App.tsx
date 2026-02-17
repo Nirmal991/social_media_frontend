@@ -9,6 +9,7 @@ import { setAuthLoad, setUser } from './store/slice/authSLice'
 import { useEffect } from 'react'
 import ProfilePage from './pages/ProfilePage';
 import type { RootState } from './store/store';
+import UploadPostPage from './pages/UploadPostPage';
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -35,6 +36,7 @@ function App() {
     <div className='min-h-screen bg-[#000000] w-full overflow-x-hidden'>
       <Routes>
         <Route path='/profile/:username' element={<ProfilePage />} />
+        <Route path='/upload-post' element={<UploadPostPage />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/' element={<FeedPage />} />
