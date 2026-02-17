@@ -5,6 +5,7 @@ import UserProfileContainer from '../components/ProfilePageComponents/UserProfil
 
 function ProfilePage() {
   return (
+    
     <div className='h-screen overflow-hidden bg-black'>
       <Navbar />
 

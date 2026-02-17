@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import UserInfo from './UserInfo'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux';
@@ -8,9 +8,10 @@ import type { UserPostType } from '../../types/userPost';
 import Spinner from '../General/Spinner';
 import { UploadIcon } from 'lucide-react';
 import UserPosts from './UserPosts';
+import { getUserProfileInfo, getUserProfilePost } from '../../api/userProfile.api';
 
 const UserProfileContainer = () => {
-    const { username } = useParams<{username: string}>();
+    const { username } = useParams<{ username: string }>();
     const loggedInUser = useSelector((state : RootState) => state.auth.user);
 
     const [userProfileInfo, setUserProfileInfo] =  useState<userProfileInfoType | null>(null);
@@ -19,15 +20,62 @@ const UserProfileContainer = () => {
     const [userPosts, setUserPosts] = useState<UserPostType[]>([]);
 
     const refetchProfile = async() => {
-
+        if (!username) {
+            return;
+        }
+        try {
+            const userProfileInfo = await getUserProfileInfo(username);
+            setUserProfileInfo(userProfileInfo);
+        } catch (error) {
+            console.log("Failed to fetch profile: ", error);
+        }
     }
 
-    const getUserProfileData = async() => {
+    useEffect(() => {
+        const init = async() => {
+            setLoading(true);
+            await refetchProfile();
+            setLoading(false);
+        };
+        init();
+    }, [username])
 
-    }
+    useEffect(() => {
+        if (!username) return;
 
-    const handleDeletePostFromUI  = async() => {
+        const getUserProfileData = async() => {
+            try {
+                const userProfileInfo = await getUserProfileInfo(username);
+                setUserProfileInfo(userProfileInfo);
+            } catch (error) {
+                console.log("Failed to fetch profile: ", error);
+            }finally{
+                setLoading(false);
+            }
+        }
+          getUserProfileData();
+    }, [username])
 
+    useEffect(() => {
+        if(!username) return;
+
+        const getUserPost = async() => {
+            try {
+                const response = await getUserProfilePost(username);
+                setUserPosts(response);
+            } catch (error) {
+                console.log("Failed to fetch posts: ", error);
+            }finally{
+                setPostLoading(false);
+            }
+        };
+
+        getUserPost();
+    }, [username])
+
+    const handleDeletePostFromUI  = (postId: string) => {
+        setUserPosts((prev) => prev.filter((post) => post._id !== postId));
+        refetchProfile();
     };
 
     if (loading) return <Spinner />;
@@ -54,7 +102,7 @@ const UserProfileContainer = () => {
         {postLoading ? (
             <Spinner />
         ) : (
-            <UserPosts />
+            <UserPosts userPosts={userPosts} onDeletePost={handleDeletePostFromUI}/>
         )}
     </div>
   )
