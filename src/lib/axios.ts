@@ -2,13 +2,27 @@ import axios from 'axios';
 import { backendUrl } from "../utils/constant";
 
 const api = axios.create({
-    baseURL: backendUrl,
-    withCredentials: true,
-    headers: {
-        Accept: "application/json"
-    }
+  baseURL: backendUrl,
+  withCredentials: true,
+  headers: {
+    Accept: "application/json",
+  },
 });
 
+// REQUEST interceptor FIRST
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  console.log("Interceptor token:", token);
+
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+// RESPONSE interceptor AFTER
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -22,17 +36,7 @@ api.interceptors.response.use(
       message,
       error: error?.response?.data?.errors || [],
     });
-  },
+  }
 );
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-
 export default api;
-

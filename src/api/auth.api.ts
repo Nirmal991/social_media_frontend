@@ -1,28 +1,29 @@
 import api from "../lib/axios";
 import type { LoginUserFormData, RegisterUserFormData } from "../schemas/auth.schema";
-import { backendUrl } from "../utils/constant";
 
-export const registerUser = async(data: RegisterUserFormData) => {
-    console.log({ backendUrl});
+export const registerUser = async (data: RegisterUserFormData) => {
     const formData = new FormData();
 
-    formData.append("username", data.username)
-    formData.append("email", data.email)
-    formData.append("password", data.password)
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
 
-    if(data.profileImage && data.profileImage.length > 0){
+    if (data.profileImage && data.profileImage.length > 0) {
         formData.append("profileImage", data.profileImage[0]);
     }
 
-    const response = await api.post("/auth/signup", formData, {
-        headers: {
-            "Content-Type": "multipart/formdata",
-        }
-    })
-    console.log(response.data);
-    
+    const response = await api.post("/auth/signup", formData);
+
+    console.log("Register DATA: ", response.data);
+
+    const token = response.data.data.accessToken;
+    console.log("Token being stored:", token);
+
+    localStorage.setItem("token", response.data.data.accessToken);
+
     return response.data;
-}
+};
+
 
 export const loginUser = async(data: LoginUserFormData) => {
     const formData = new FormData();
@@ -37,6 +38,9 @@ export const loginUser = async(data: LoginUserFormData) => {
         formData.append("username", data.identifier)
     }
     formData.append("password", data.password);
+
+    console.log("FORMDATA :", formData);
+    
 
     const response = await api.post('/auth/login', formData, {
         headers: {

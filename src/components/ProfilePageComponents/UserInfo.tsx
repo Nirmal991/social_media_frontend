@@ -83,6 +83,8 @@ const UserInfo = ({ user, refetchProfile }: UserInfoProps) => {
             setIsFollowing(prevIsFollowing);
             setFollowersCount(prevFollowersCount);
             toast.error(`${error.message}`);
+        }finally{
+            setLoading(false)
         }
     }
 

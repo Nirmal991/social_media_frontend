@@ -33,7 +33,6 @@ const RegisterUserForm = () => {
             setServerError(null)
 
             const response = await registerUser(data);
-            localStorage.setItem("token", response.accessToken);
             console.log("Registered: ", response);
             dispatch(setUser(response.data.user));
             toast.success("Account Created Successfully");

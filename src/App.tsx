@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import ProfilePage from './pages/ProfilePage';
 import type { RootState } from './store/store';
 import UploadPostPage from './pages/UploadPostPage';
+import EditPostPage from './pages/EditPostPage';
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -36,6 +37,7 @@ function App() {
     <div className='min-h-screen bg-[#000000] w-full overflow-x-hidden'>
       <Routes>
         <Route path='/profile/:username' element={<ProfilePage />} />
+        <Route path='profile/:username/post/edit/:postId' element={<EditPostPage />} />
         <Route path='/upload-post' element={<UploadPostPage />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/login' element={<LoginPage />} />

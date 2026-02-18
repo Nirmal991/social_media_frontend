@@ -11,12 +11,12 @@ export const getUserProfilePost = async(username: string) => {
 }
 
 export const followUser = async(username: string) => {
-    const response = await api.get(`/auth/follow/${username}`);
+    const response = await api.post(`/auth/follow/${username}`);
     return response.data;
 }
 
 export const UnfollowUser = async(username: string) => {
-    const response = await api.get(`/auth/unfollow/${username}`);
+    const response = await api.post(`/auth/unfollow/${username}`);
     return response.data
 }
 
