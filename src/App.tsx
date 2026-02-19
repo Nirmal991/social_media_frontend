@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage';
 import type { RootState } from './store/store';
 import UploadPostPage from './pages/UploadPostPage';
 import EditPostPage from './pages/EditPostPage';
+import ChatPage from './pages/ChatPage';
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -39,6 +40,7 @@ function App() {
         <Route path='/profile/:username' element={<ProfilePage />} />
         <Route path='profile/:username/post/edit/:postId' element={<EditPostPage />} />
         <Route path='/upload-post' element={<UploadPostPage />} />
+        <Route path='/chat/:receiverId' element={<ChatPage />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/' element={<FeedPage />} />

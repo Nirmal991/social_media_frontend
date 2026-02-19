@@ -8,6 +8,7 @@ import Sidebar from '../components/General/Sidebar'
 import { getFeedPost } from '../api/feed.api'
 import { toast } from 'react-toastify'
 import FeedPost from '../components/FeedPageComponent/FeedPost'
+import ChatBar from '../components/General/ChatBar'
 
 const FeedPage = () => {
     const { loading } = useSelector((state: RootState) => state.auth)
@@ -53,7 +54,7 @@ const FeedPage = () => {
                     )
                     }
                 </div>
-                {/* chatBox */}
+                <ChatBar />
 
             </div>
         </div>

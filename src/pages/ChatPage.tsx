@@ -1,20 +1,18 @@
-import React from 'react'
+
 import Navbar from '../components/General/Navbar'
 import Sidebar from '../components/General/Sidebar'
-import UserProfileContainer from '../components/ProfilePageComponents/UserProfileContainer'
+import ChatContainer from '../components/ChatPageComponents/ChatContainer'
 import ChatBar from '../components/General/ChatBar'
 
-function ProfilePage() {
+const ChatPage = () => {
   return (
-    
     <div className='h-screen overflow-hidden bg-black'>
       <Navbar />
-
       <div className='flex h-[calc(100vh-10vh)] overflow-hidden'>
-        <Sidebar />
 
+        <Sidebar />
         <div className='flex-1 overflow-y-auto'>
-          <UserProfileContainer />
+          <ChatContainer />
         </div>
         <ChatBar />
       </div>
@@ -22,4 +20,4 @@ function ProfilePage() {
   )
 }
 
-export default ProfilePage
+export default ChatPage

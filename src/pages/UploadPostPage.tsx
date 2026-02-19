@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from '../components/General/Navbar'
 import Sidebar from '../components/General/Sidebar'
 import UploadPostContainer from '../components/UploadPostPageComponents/UploadPostContainer'
+import ChatBar from '../components/General/ChatBar'
 
 const UploadPostPage = () => {
   return (
@@ -13,7 +14,7 @@ const UploadPostPage = () => {
         <div className='flex-1 overflow-y-auto'>
             <UploadPostContainer />
         </div>
-        {/* ChatBar */}
+        <ChatBar />
       </div>
     </div>
   )
