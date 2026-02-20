@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
 import FeedPage from './pages/FeedPage'
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from 'react-redux'
 import { getCurrentUser } from './api/auth.api'
 import { setAuthLoad, setUser } from './store/slice/authSLice'
@@ -12,6 +12,7 @@ import type { RootState } from './store/store';
 import UploadPostPage from './pages/UploadPostPage';
 import EditPostPage from './pages/EditPostPage';
 import ChatPage from './pages/ChatPage';
+import { connectSocket } from './lib/socket';
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -20,7 +21,7 @@ function App() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const response = await getCurrentUser(); // see the issue
+        const response = await getCurrentUser();
         dispatch(setUser(response.data));
       } catch (error) {
         console.log("ERROR: ", error);
@@ -32,6 +33,28 @@ function App() {
 
     loadUser()
   }, [dispatch])
+
+  useEffect(() => {
+    if(!user?._id){
+      return;
+    }
+
+    const socket = connectSocket(user?._id);
+
+    socket.on('postLiked', (data) => {
+      console.log("Notification received: ", data);
+      toast.success(`${data.message}`);
+    })
+
+    socket.on("postCommented", (data) => {
+      toast.success(`${data.commentedBy.username} commented on your post`);
+    });
+
+    return () => {
+      socket.off('postLiked');
+      socket.off('postCommneted');
+    }
+  }, [user?._id])
 
 
   return (
